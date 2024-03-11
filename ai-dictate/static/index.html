@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Audio Transcription</title>
+</head>
+<body>
+    <button id="startRecordBtn">Start Recording</button>
+    <button id="stopRecordBtn" disabled>Stop Recording</button>
+    <h3>Transcription:</h3>
+	<p id="transcription"></p>
+	<h3>Adaptation:</h3>
+    <p id="formatted"></p>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+
+        document.getElementById('startRecordBtn').addEventListener('click', function() {
+            navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.start();
+
+                    mediaRecorder.addEventListener("dataavailable", event => {
+                        audioChunks.push(event.data);
+                    });
+
+                    this.disabled = true;
+                    document.getElementById('stopRecordBtn').disabled = false;
+                });
+        });
+
+        document.getElementById('stopRecordBtn').addEventListener('click', function() {
+            mediaRecorder.stop();
+
+            mediaRecorder.addEventListener("stop", () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
+                sendAudioToServer(audioBlob);
+                audioChunks = [];
+
+                document.getElementById('startRecordBtn').disabled = false;
+                this.disabled = true;
+            });
+        });
+
+        function sendAudioToServer(blob) {
+            const formData = new FormData();
+            formData.append('file', blob, 'audio.ogg');
+
+            fetch('/transcribe', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('transcription').textContent = data.transcription;
+                document.getElementById('formatted').textContent = data.formatted;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
