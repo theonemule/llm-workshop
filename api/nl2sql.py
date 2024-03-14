@@ -20,18 +20,17 @@ local_storage = Local()
 local_storage.db_connection = None
 local_storage.db_cursor = None
 
-def askquestion(request, client):
+def askquestion(request, client, deployment_name):
 
     # Get the question from the request
     question = request.json.get('question')        
         
     print(question)
-
-
-    response = openai.ChatCompletion.create(
-        engine=deployment_name, # engine = "deployment_name".
+    
+    completion = client.chat.completions.create(
+        model=deployment_name,  # e.g. gpt-35-instant
         messages=[
-            {"role": "system", "content": """I want you to generate a SQL query from the following table called QuestionsAnswers columns for a SQLLite database
+            {"role": "system", "content": """Generate just a SQL query from the following table called QuestionsAnswers with columns for a SQLLite database
 
 ShowNumber,
 AirDate,
@@ -41,19 +40,21 @@ Value,
 Question,
 Answer
 
-Rreturn just the SQL. Include all the fields. Limit the results to 500
+Return just the SQL. No Commentary! Include all the fields. Limit the results to 500
 """},
             {"role": "user", "content": question}
         ]
-    )        
+    )
     
-    print(response)
-    # print(response['choices'][0]['message']['content'])
+
     
     init_db()
 
 
-    sql_query = response['choices'][0]['message']['content']
+
+    sql_query = completion.choices[0].message.content
+
+    print(sql_query)
 
     #db_cursor.execute(sql_query)
     #results = db_cursor.fetchall()

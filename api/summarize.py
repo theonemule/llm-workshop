@@ -34,7 +34,7 @@ def scrape_wikipedia_article(url):
     else:
         return {'error': f'Failed to retrieve the Wikipedia article. Status code: {response.status_code}'}
 
-def summarize_text(text, client, deployment_name):
+def summarize_text(text, prompt, client, deployment_name):
     # Tokenize the text to get an accurate token count
    
     enc = tiktoken.encoding_for_model('gpt-3.5-turbo')
@@ -55,7 +55,7 @@ def summarize_text(text, client, deployment_name):
             messages=[
                 {
                     "role": "system",
-                    "content": "Summarize the content from Wikipedia in one or two paragraphs.",
+                    "content": prompt,
                 },
                 {
                     "role": "user",
@@ -76,6 +76,7 @@ def summarize_text(text, client, deployment_name):
 def scrape_and_summarize(request, client, deployment_name):
     # Get the URL from the request query parameters
     url = request.args.get('url')
+    prompt = request.args.get('prompt') or "Summarize the content from Wikipedia in one or two paragraphs."
     
     if url:
         # Call the scrape_wikipedia_article function
@@ -83,7 +84,7 @@ def scrape_and_summarize(request, client, deployment_name):
         
         if 'error' not in article_data:
             # Call the summarize_text function
-            summary = summarize_text(article_data['content'], client, deployment_name)
+            summary = summarize_text(article_data['content'], prompt, client, deployment_name)
             return jsonify({'title': article_data['title'], 'summary': summary})
         else:
             return jsonify({'error': article_data['error']})
