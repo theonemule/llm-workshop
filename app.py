@@ -7,6 +7,7 @@ from api.quote import generate_quote
 from api.ragapi import ragsearch
 from api.ragapi import getresume
 
+
 from openai import AzureOpenAI
 import os
 

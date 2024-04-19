@@ -21,6 +21,8 @@ def transcribe_audio(request, client, deployment_name):
         filename = f"{uuid.uuid4().hex}_temp_audio.ogg"
         file.save(filename)
 
+        print(filename)
+
         # Transcribe the audio file
         result = model.transcribe(filename)
 
