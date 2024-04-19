@@ -163,8 +163,6 @@ const baseUrl = "https://cloud.blaize.net/llmworkshop"
 			<input type="text" class="form-control" id="tokenizationPrompt" placeholder="Input text">
 		</div>
 		<button class="btn btn-primary" onclick="fetchTokens()">Get Tokens</button>
-		<p id="tokenDisplay" class="mt-3"></p>
-		<p id="tokenCount" class="mt-3"></p>
 	
 		<script>
 			function fetchTokens() {
@@ -201,6 +199,23 @@ const baseUrl = "https://cloud.blaize.net/llmworkshop"
 		</script>
 	
 		<h2>Description</h2>
+		<p>Tokenize user input into and return the count of resulting tokens and show the resulting array of tokens.</p>
+
+		<h2>Details</h2>
+		<p>So that LLMs can process and understand natural language, and code, text is broken down into smaller units called tokens. A token could be anything from a word to a subword, to a character like a punctuation mark. Several tokenizers exist (Byte-Pair Encoding, WordPiece, SentencePiece) and vary in how they handle tokenization. The details of that aren't important for this training, but you need to know that input is tokenized, that context length is measured in tokens, and context length limits your input and output.</p>
+
+		<h2>Count</h2>
+		<p>The count of your input:</p>
+		<p id="tokenCount" class="mt-3"></p>
+
+		<h2>Token Array</h2>
+		<p>Here’s what your input looks like after it’s been tokenized for ingestion by the LLM:</p>
+		<p id="tokenDisplay" class="mt-3"></p>
+
+		<h2>References</h2>
+		<ul>
+			<li><a href="https://huggingface.co/docs/transformers/tokenizer_summary">Summary of the tokenizers</a></li>
+		</ul>
 
 	
 	</div>
