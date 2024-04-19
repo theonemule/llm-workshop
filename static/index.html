@@ -36,7 +36,7 @@ const baseUrl = "https://cloud.blaize.net/llmworkshop"
     <!-- Tabs navigation -->
     <ul class="nav nav-tabs">
         <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#lab1a" data-bs-toggle="tab">Lab 1a</a>
+            <a class="nav-link active" aria-current="page" href="#zeroShotPrompts" data-bs-toggle="tab">Zero-Shot Prompt</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#lab1b" data-bs-toggle="tab">Lab 1b</a>
@@ -56,7 +56,7 @@ const baseUrl = "https://cloud.blaize.net/llmworkshop"
     </ul>
 	<div class="tab-content pt-4">
     <!-- Tabs content -->
-       <div class="tab-pane active" id="lab1a">
+       <div class="tab-pane active" id="zeroShotPrompts">
 			
             <h2>Zero-Shot Prompt: Inspirational Quote Generator</h2>
             <div class="mb-3">
@@ -99,11 +99,56 @@ const baseUrl = "https://cloud.blaize.net/llmworkshop"
 				}
 			</script>
 
+			<h2>Description</h2>
+			<p>Providing a task without prior examples relies on the model's pre-existing knowledge.</p>
+			
+			<h2>Details</h2>
+			<p>Zero-shot prompts use in-content learning but are instructional only. They leverage the model’s ability to perform
+				tasks correctly that it has not explicitly been trained to do, solely based on its pre-existing knowledge and
+				understanding, without specific examples provided at inference time. These are simply "follow instructions" prompts.
+			</p>
+			
+			<p>Like all prompts, the ability of the model to accurately infer your intended output is a function of the amount and
+				quality of the detail that you provide. "Garbage in, garbage out." Remember, we don’t have Artificial General
+				Intelligence (AGI) yet. A prompt such as “Upgrade this repository from .NET 6 to .NET 8” is too ambitious for our
+				current technology. Be specific, focused, and detailed.</p>
+			
+			<p>Chain-of-thought reasoning has been shown to improve model reasoning. You’ve probably seen the prompt, “Let’s take
+				this step by step.” When we include this instruction, we’re asking models to elicit their own chain of reasoning.
+				Studies have shown that even including this instruction, without explicit steps, can improve model reasoning. As of
+				this writing (April 2024), chain-of-thought seems baked into many system models like GitHub Copilot. Without
+				prompting it to do so, you’ll often see models today output steps in their output when you input a complicated
+				prompt. However, there are times when you’ll want to include explicit steps for the model to take. This is another
+				example of being specific.</p>
+			
+			<h2>Tips</h2>
+			<ul>
+				<li>Be specific.</li>
+				<li>Keep the model focused and on task (unless you are having an exploratory conversation).</li>
+				<li>Use delimiters for clarity.</li>
+				<li>Details, details, details.</li>
+				<li>Outline the chain of thought when needed.</li>
+			</ul>
+
+			<h2>Limitations</h2>
+			<p>Zero-shot prompts will be less effective than n-shot prompts where you want output on a specialized or niche topic or
+			where you want output that differs significantly from the data the model was trained on. In those cases, you’ll want to
+			provide example output or sample input/output pairs.</p>
+			
+			<h2>References</h2>
+			<ul>
+				<li><a href="https://ar5iv.labs.arxiv.org/html/2201.11903">Chain-of-thought prompting elicits reasoning in large
+						language models</a></li>
+				<li><a href="https://ar5iv.labs.arxiv.org/html/2205.11916">Large language models are zero-shot reasoners</a></li>
+			</ul>
+
 				
         </div>			
 	
 
         <div class="tab-pane" id="lab1b">
+		
+		
 			
             <h2>Text Summarization: Summarize a Wikipedia Article</h2>
             <div class="mb-3">
@@ -237,6 +282,23 @@ const baseUrl = "https://cloud.blaize.net/llmworkshop"
         <div class="tab-pane" id="lab3a">
 		
             <h2>Vector Search</h2>
+			
+		
+			<p>NL2SQL, which stands for "Natural Language to SQL," is a technology or method used to translate natural language queries into SQL (Structured Query Language) queries. This approach enables users to interact with databases using everyday language, making data more accessible to those who may not have technical skills in SQL.</p>
+			
+			<p><img style="width:500px" src="images/nl2sql.png"></p>
+			
+			<p>
+			
+			The process is pretty straight forward: First, the user enters a natural language query or command. This is passed to the LLM with context that describes the database or tables. THe LLM them attempts to undertand the natural language in the context of the database, and from that it generates a SQL Query. Finally, the generated SQL query is executed against a database, and the results are returned to the user. The system may additionally format these results from their raw database output to a more user-friendly presentation, such as charts or summaries, enhancing the accessibility and understanding of the data.
+			
+			</p>
+			
+			<p>Here, tell the GPT how you want to refine your transcription, like, "Make my transcription a poem," or "Make my transcription flow better with complete sentences and better punctuation." Tweak your prompts and and record again to see how things change.</p>
+		
+			
+			
+			
             <div class="mb-3">
                 <input type="text" class="form-control" id="searchQuery" placeholder="Enter your question here about Jeopary...">
             </div>
