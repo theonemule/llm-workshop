@@ -188,7 +188,7 @@ const baseUrl = "https://cloud.blaize.net/llmworkshop"
 								const tokenArrayContainer = document.getElementById('tokenDisplay');
 								const tokenCountContainer = document.getElementById('tokenCount');
 								tokenArrayContainer.innerHTML = data.tokens; // Clear previous results
-								tokenCountContainer.innerHTML = data.token_count; // Clear previous results
+								tokenCountContainer.innerHTML = data.count; // Clear previous results
 							}
 						})
 						.catch(error => {

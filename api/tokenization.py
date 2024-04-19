@@ -18,7 +18,7 @@ def tokenize_text(request, deployment_name):
     data = request.json
     user_input = data.get("prompt")
 
-    encoding = tiktoken.encoding_for_model(deployment_name)
+    encoding = tiktoken.encoding_for_model('gpt-3.5-turbo')
     tokens = encoding.encode(user_input)
 
     token_count = len(encoding.encode(user_input))
