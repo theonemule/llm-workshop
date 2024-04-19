@@ -65,6 +65,8 @@ Return just the SQL. No Commentary! Include all the fields. Limit the results to
 
     # Format and return the results as JSON
     result_data = []
+    
+    
     for row in results:
         result_data.append({
             'ShowNumber': row[0],
@@ -76,7 +78,11 @@ Return just the SQL. No Commentary! Include all the fields. Limit the results to
             'Answer': row[6]
         })
 
-    return jsonify(result_data)    
+    # jsonify({'sqlQuery': sql_query, 'results':result_data})
+
+    return jsonify({'sqlQuery': sql_query, 'results':result_data})
+    
+    # jsonify(result_data)    
 
 
     
