@@ -7,6 +7,24 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
+	.toggle {
+		cursor: pointer;
+		user-select: none; /* Prevent text selection */
+	}
+	.toggle.collapsed::before {
+		content: '▼ ';
+		display: inline-block;
+		transform: rotate(0deg);
+		transition: transform 0.3s ease;
+	}
+	.toggle::before {
+		content: '▼ ';
+		display: inline-block;
+		transform: rotate(-90deg);
+		transition: transform 0.3s ease;
+	}
+</style>
 <body>
 
 <script>
@@ -386,13 +404,28 @@ const baseUrl = "https://cloud.blaize.net/llmworkshop"
         </div>		
         <div class="tab-pane" id="lab4">
             <h2>Combining AI: Transcribe Text and Augment Text</h2>
+		
+
+					<p>One of the cool things you can do with AI is combine models to create dynamic outcomes. Truthfully, RAG applications already do this with embedding models and gendrative models, but here you'll combine Whisper, an model used for speech to text with GPT3.5 to create a transcription.</p>
+					
+					<p><img style="width:500px" src="images/speech2text.png"></p>
+					
+					<p>The Whisper model is an automatic speech recognition (ASR) system developed by OpenAI, which leverages a transformer architecture to transcribe spoken language into text. Trained on a diverse set of data, including multiple languages and accents, it offers robust performance across various environments, even in noisy conditions. Whisper's end-to-end learning approach allows it to process raw audio input directly into written text, bypassing traditional intermediate transcription steps. The GPT supplements the model by refining the output from the audio transcription.</p>
+					
+					<p>Here, tell the GPT how you want to refine your transcription, like, "Make my transcription a poem," or "Make my transcription flow better with complete sentences and better punctuation." Tweak your prompts and and record again to see how things change.</p>
+	
+
+
+			
+						
+
+            <div class="mb-3">
+                <textarea class="form-control" id="dictatePrompt" rows="4" placeholder="How do you  want to refine your transcription?"></textarea>
+            </div>
             <div class="mb-3">
                 <button class="btn btn-primary" id="startRecordBtn">Start Recording</button>
                 <button class="btn btn-secondary" id="stopRecordBtn" disabled>Stop Recording</button>
-            </div>
-            <div class="mb-3">
-                <textarea class="form-control" id="dictatePrompt" rows="4" placeholder="Enter your prompt here..."></textarea>
-            </div>
+            </div>			
             <h3 class="mt-4">Transcription:</h3>
             <p id="transcription"></p>
             <h3>Adaptation:</h3>

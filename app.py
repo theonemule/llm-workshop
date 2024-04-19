@@ -20,7 +20,7 @@ client = AzureOpenAI(
     azure_endpoint=api_base,
 )
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__, static_folder='static', static_url_path='/')
 
 @app.route('/summarize', methods=['GET'])
 def summarize():
@@ -39,7 +39,7 @@ def ask():
     return askquestion(request, client, deployment_name)  
 
 @app.route('/dictate', methods=['POST'])
-def dictate():    
+def dictate():                                 
     return transcribe_audio(request, client, deployment_name)  
     
 @app.route('/rag', methods=['POST'])
@@ -56,3 +56,5 @@ def index():
     
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)    
+    
+    
