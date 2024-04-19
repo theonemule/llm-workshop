@@ -1,17 +1,11 @@
-# pip install flask openai whisper werkzeug BeautifulSoup4 tiktoken pymilvus tensor pandas milvus transformers tensor openai-whisper, ffmpeg
-
-# DEPLOYMENT_NAME=ai-dictate
-# AZURE_OPENAI_ENDPOINT=https://ai-dictate.openai.azure.com/
-# OPENAI_API_VERSION=2023-05-15
-# AZURE_OPENAI_API_KEY=e34a2369778a4c0ebee164e8fceca658
-
 from flask import Flask, request, jsonify, send_from_directory
 from api.summarize import scrape_and_summarize
 from api.vectorsearch import search
 from api.nl2sql import askquestion
 from api.dictate import transcribe_audio
 from api.quote import generate_quote
-
+from api.ragapi import ragsearch
+from api.ragapi import getresume
 
 from openai import AzureOpenAI
 import os
@@ -46,7 +40,14 @@ def ask():
 @app.route('/dictate', methods=['POST'])
 def dictate():    
     return transcribe_audio(request, client, deployment_name)  
-
+    
+@app.route('/rag', methods=['POST'])
+def rag():    
+    return ragsearch(request, client, deployment_name)   
+        
+@app.route('/resume', methods=['GET'])
+def resume():
+    return getresume(request)
     
 @app.route('/')
 def index():

@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web App with Tabs</title>
+    <title>LLM Workshop</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+
+<script>
+//const baseUrl = "https://cloud.blaize.net/llmworkshop"
+const baseUrl = "http://172.24.89.138:5000"
+</script>
 
 <div class="container mt-5">
     <!-- Tabs navigation -->
@@ -22,60 +27,20 @@
             <a class="nav-link" href="#lab2" data-bs-toggle="tab">Lab 2</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="#lab3" data-bs-toggle="tab">Lab 3</a>
+            <a class="nav-link" href="#lab3a" data-bs-toggle="tab">Lab 3a</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#lab3b" data-bs-toggle="tab">Lab 3b</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#lab4" data-bs-toggle="tab">Lab 4</a>
         </li>
     </ul>
-
-    <!-- Tabs content -->
 	<div class="tab-content pt-4">
-        <div class="tab-pane active" id="lab1a">
+    <!-- Tabs content -->
+       <div class="tab-pane active" id="lab1a">
 			
-            <h2>Summarize Wikipedia Article</h2>
-            <div class="mb-3">
-                <input type="text" id="articleUrl" class="form-control" placeholder="Enter Wikipedia Article URL">
-            </div>
-            <div class="mb-3">
-                <textarea id="wikiPrompt" class="form-control" rows="4" placeholder="Enter your prompt here..."></textarea>
-            </div>
-            <button class="btn btn-primary" onclick="summarizeArticle()">Summarize</button>
-            <h3 class="mt-4">Summary:</h3>
-            <div id="summary"></div>
-
-			<script>
-				function summarizeArticle() {
-					const url = document.getElementById('articleUrl').value;
-					const prompt = document.getElementById('wikiPrompt').value;
-					if (!url||!prompt) {
-						alert('Please enter a Wikipedia article URL  and Prompt.');
-						return;
-					}
-					
-					fetch(`/summarize?url=${encodeURIComponent(url)}&prompt=${prompt}`)
-						.then(response => response.json())
-						.then(data => {
-							if (data.error) {
-								document.getElementById('summary').textContent = 'Error: ' + data.error;
-							} else {
-								document.getElementById('summary').textContent = `Title: ${data.title}\n\nSummary: ${data.summary}`;
-							}
-						})
-						.catch(error => {
-							console.error('Error:', error);
-							document.getElementById('summary').textContent = 'An error occurred while fetching the summary.';
-						});
-				}
-			</script>
-
-				
-        </div>
-		
-		
-       <div class="tab-pane" id="lab1b">
-			
-            <h2>Inspirational Quote Generator</h2>
+            <h2>Zero-Shot Prompt: Inspirational Quote Generator</h2>
             <div class="mb-3">
                 <label for="quotePrompt" class="form-label">Enter your prompt:</label>
                 <input type="text" class="form-control" id="quotePrompt" placeholder="Describe your quote.">
@@ -91,7 +56,7 @@
 						return;
 					}
 					
-					fetch('/quote', {
+					fetch(baseUrl + '/quote', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -117,14 +82,145 @@
 			</script>
 
 				
-        </div>		
-		
+        </div>			
+	
+
+        <div class="tab-pane" id="lab1b">
+			
+            <h2>Text Summarization: Summarize a Wikipedia Article</h2>
+            <div class="mb-3">
+                <input type="text" id="articleUrl" class="form-control" placeholder="Enter Wikipedia Article URL">
+            </div>
+            <div class="mb-3">
+                <textarea id="wikiPrompt" class="form-control" rows="4" placeholder="How do you want to summarize this article?"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="summarizeArticle()">Summarize</button>
+            <h3 class="mt-4">Summary:</h3>
+            <div id="summary"></div>
+
+			<script>
+				function summarizeArticle() {
+					const url = document.getElementById('articleUrl').value;
+					const prompt = document.getElementById('wikiPrompt').value;
+					if (!url||!prompt) {
+						alert('Please enter a Wikipedia article URL  and Prompt.');
+						return;
+					}
+					
+					fetch(`${baseUrl}/summarize?url=${encodeURIComponent(url)}&prompt=${prompt}`)
+						.then(response => response.json())
+						.then(data => {
+							if (data.error) {
+								document.getElementById('summary').textContent = 'Error: ' + data.error;
+							} else {
+								document.getElementById('summary').textContent = `Title: ${data.title}\n\nSummary: ${data.summary}`;
+							}
+						})
+						.catch(error => {
+							console.error('Error:', error);
+							document.getElementById('summary').textContent = 'An error occurred while fetching the summary.';
+						});
+				}
+			</script>
+
+				
+        </div>
 		
         <div class="tab-pane" id="lab2">
 		
+            <h2>Natural Language to SQL (NL2SQL)</h2>
+            <div class="mb-3">
+                <textarea class="form-control" id="questionText" rows="4" placeholder="Enter your question here about Jeopary..."></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="askQuestion()">Submit Question</button>
+            <h3 class="mt-4">Results:</h3>
+            <div id="queryResults"></div>
+
+			<script>
+				function askQuestion() {
+					const question = document.getElementById('questionText').value;
+					if (!question) {
+						alert('Please enter a question.');
+						return;
+					}
+
+					fetch(baseUrl + '/ask_question', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({ question: question }),
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.error) {
+							document.getElementById('queryResults').textContent = 'Error: ' + data.error;
+						} else {
+							displayResults(data);
+						}
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						document.getElementById('queryResults').textContent = 'An error occurred while fetching the query results.';
+					});
+				}
+
+				function displayResults(data) {
+					const resultsContainer = document.getElementById('queryResults');
+					resultsContainer.innerHTML = ''; // Clear previous results
+
+					if (data.length === 0) {
+						resultsContainer.innerHTML = '<p>No results found.</p>';
+						return;
+					}
+
+					const table = document.createElement('table');
+					table.setAttribute('border', '1');
+					table.style.width = '100%';
+					table.style.borderCollapse = 'collapse';
+					table.classList.add("table");
+					
+
+					const thead = table.createTHead();
+					const headerRow = thead.insertRow();
+					const headers = ['Show Number', 'Air Date', 'Round', 'Category', 'Value', 'Question', 'Answer'];
+					headers.forEach(headerText => {
+						const headerCell = document.createElement('th');
+						headerCell.textContent = headerText;
+						headerRow.appendChild(headerCell);
+					});
+
+					const tbody = table.createTBody();
+					data.forEach(item => {
+						const row = tbody.insertRow();
+						const cellData = [
+							item.ShowNumber,
+							item.AirDate ? new Date(item.AirDate).toLocaleDateString() : 'N/A',
+							item.Round,
+							item.Category,
+							`$${item.Value}`,
+							item.Question, // Will handle HTML content in the next step
+							item.Answer
+						];
+						cellData.forEach((cellText, index) => {
+							const cell = row.insertCell();
+							if (index === 5) { // Assuming the Question field might contain HTML links
+								cell.innerHTML = cellText;
+							} else {
+								cell.textContent = cellText;
+							}
+						});
+					});
+
+					resultsContainer.appendChild(table);
+				}
+			</script>	
+		</div>		
+        <div class="tab-pane" id="lab3a">
+		
             <h2>Vector Search</h2>
             <div class="mb-3">
-                <input type="text" class="form-control" id="searchQuery" placeholder="Enter search query">
+                <input type="text" class="form-control" id="searchQuery" placeholder="Enter your question here about Jeopary...">
             </div>
             <button class="btn btn-primary" onclick="performSearch()">Search</button>
             <h3 class="mt-4">Results:</h3>
@@ -138,7 +234,7 @@
 						return;
 					}
 
-					fetch('/vectorsearch', {
+					fetch(baseUrl + '/vectorsearch', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
@@ -195,47 +291,47 @@
 			</script>
 
         </div>
-        <div class="tab-pane" id="lab3">
+        <div class="tab-pane" id="lab3b">
 		
-            <h2>Ask a Question about Jeopardy!</h2>
+            <h2>Retrieval Augmented Generation (RAG) App</h2>
             <div class="mb-3">
-                <textarea class="form-control" id="questionText" rows="4" placeholder="Enter your question here..."></textarea>
+                <textarea class="form-control" id="resumeText" rows="4" placeholder="Enter your question about resumes here..."></textarea>
             </div>
-            <button class="btn btn-primary" onclick="askQuestion()">Submit Question</button>
+            <button class="btn btn-primary" onclick="searchResumes()">Submit Question</button>
             <h3 class="mt-4">Results:</h3>
-            <div id="queryResults"></div>
+            <div id="resumeResults"></div>
 
 			<script>
-				function askQuestion() {
-					const question = document.getElementById('questionText').value;
+				function searchResumes() {
+					const question = document.getElementById('resumeText').value;
 					if (!question) {
 						alert('Please enter a question.');
 						return;
 					}
 
-					fetch('/ask_question', {
+					fetch(baseUrl + '/rag', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json',
 						},
-						body: JSON.stringify({ question: question }),
+						body: JSON.stringify({ query: question }),
 					})
 					.then(response => response.json())
 					.then(data => {
 						if (data.error) {
-							document.getElementById('queryResults').textContent = 'Error: ' + data.error;
+							document.getElementById('resumeResults').textContent = 'Error: ' + data.error;
 						} else {
-							displayResults(data);
+							displayResumes(data);
 						}
 					})
 					.catch(error => {
 						console.error('Error:', error);
-						document.getElementById('queryResults').textContent = 'An error occurred while fetching the query results.';
+						document.getElementById('resumeResults').textContent = 'An error occurred while fetching the query results.';
 					});
 				}
 
-				function displayResults(data) {
-					const resultsContainer = document.getElementById('queryResults');
+				function displayResumes(data) {
+					const resultsContainer = document.getElementById('resumeResults');
 					resultsContainer.innerHTML = ''; // Clear previous results
 
 					if (data.length === 0) {
@@ -247,10 +343,11 @@
 					table.setAttribute('border', '1');
 					table.style.width = '100%';
 					table.style.borderCollapse = 'collapse';
+					table.classList.add("table");
 
 					const thead = table.createTHead();
 					const headerRow = thead.insertRow();
-					const headers = ['Show Number', 'Air Date', 'Round', 'Category', 'Value', 'Question', 'Answer'];
+					const headers = ['ID', 'Category', 'Summary'];
 					headers.forEach(headerText => {
 						const headerCell = document.createElement('th');
 						headerCell.textContent = headerText;
@@ -260,23 +357,25 @@
 					const tbody = table.createTBody();
 					data.forEach(item => {
 						const row = tbody.insertRow();
-						const cellData = [
-							item.ShowNumber,
-							item.AirDate ? new Date(item.AirDate).toLocaleDateString() : 'N/A',
-							item.Round,
-							item.Category,
-							`$${item.Value}`,
-							item.Question, // Will handle HTML content in the next step
-							item.Answer
+						var cell = row.insertCell();
+						cell.innerHTML = `<a href="resume?id=${item.id}&category=${item.category}" target="_blank">${item.id}</a>`
+						cell = row.insertCell();
+						cell.innerText = item.category;
+						cell = row.insertCell();
+						cell.innerText = item.answer;
+						/*const cellData = [
+							item.id,
+							item.category,
+							item.answer
 						];
 						cellData.forEach((cellText, index) => {
 							const cell = row.insertCell();
-							if (index === 5) { // Assuming the Question field might contain HTML links
+							if (index === 0) { // Assuming the Question field might contain HTML links
 								cell.innerHTML = cellText;
 							} else {
 								cell.textContent = cellText;
 							}
-						});
+						});*/
 					});
 
 					resultsContainer.appendChild(table);
@@ -284,9 +383,9 @@
 			</script>	
 				
 		
-        </div>
+        </div>		
         <div class="tab-pane" id="lab4">
-            <h2>Transcribe Text!</h2>
+            <h2>Combining AI: Transcribe Text and Augment Text</h2>
             <div class="mb-3">
                 <button class="btn btn-primary" id="startRecordBtn">Start Recording</button>
                 <button class="btn btn-secondary" id="stopRecordBtn" disabled>Stop Recording</button>
@@ -336,7 +435,7 @@
 					formData.append('file', blob, 'audio.ogg');
 					formData.append('prompt', document.getElementById("dictatePrompt").value);
 
-					fetch('/dictate', {
+					fetch(baseUrl + '/dictate', {
 						method: 'POST',
 						body: formData
 					})

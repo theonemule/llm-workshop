@@ -55,7 +55,7 @@ def summarize_text(text, prompt, client, deployment_name):
             messages=[
                 {
                     "role": "system",
-                    "content": prompt,
+                    "content": "Summarize the user's text according to this scheme: " + prompt,
                 },
                 {
                     "role": "user",

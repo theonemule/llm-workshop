@@ -18,13 +18,18 @@ RUN pip3 install flask openai whisper werkzeug BeautifulSoup4 tiktoken pymilvus 
 # Copy your Python scripts into the container
 COPY data/import-milvus.py import-milvus.py
 COPY data/import-sqlite.py import-sqlite.py
+COPY data/JEOPARDY.csv JEOPARDY.csv
+COPY data/import-data.sh import-data.sh
 COPY app.py /app.py
+COPY api api
+COPY static static
+COPY start.sh start.sh
 
-RUN milvus-server & && python3 ./data/import-milvus.py && python3 ./data/import-sqlite.py
+RUN chmod +x import-data.sh && ./import-data.sh
 
 # Expose the port your app runs on
 EXPOSE 5000
 
 
 # This CMD instruction might need to be replaced or supplemented by a more complex startup script that can handle starting the server in the background and then executing your Python scripts.
-CMD ["sh", "-c", "milvus-server & && python3 app.py"]
+CMD ["sh", "-c", "/start.sh"]
