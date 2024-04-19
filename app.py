@@ -6,6 +6,7 @@ from api.dictate import transcribe_audio
 from api.quote import generate_quote
 from api.ragapi import ragsearch
 from api.ragapi import getresume
+from api.tokenization import tokenize_text
 
 
 from openai import AzureOpenAI
@@ -26,14 +27,18 @@ app = Flask(__name__, static_folder='static', static_url_path='/')
 def summarize():
     return scrape_and_summarize(request, client, deployment_name)
 
+@app.route("/tokenize", methods=["POST"])
+def tokenize():
+    return tokenize_text(request, deployment_name)
+
 @app.route('/quote', methods=['POST'])
 def quote():
     return generate_quote(request, client, deployment_name)    
-  
+
 @app.route('/vectorsearch', methods=['POST'])
 def vectorsearch():
     return search(request)    
-    
+
 @app.route('/ask_question', methods=['POST'])
 def ask():    
     return askquestion(request, client, deployment_name)  
@@ -41,20 +46,18 @@ def ask():
 @app.route('/dictate', methods=['POST'])
 def dictate():                                 
     return transcribe_audio(request, client, deployment_name)  
-    
+
 @app.route('/rag', methods=['POST'])
 def rag():    
     return ragsearch(request, client, deployment_name)   
-        
+
 @app.route('/resume', methods=['GET'])
 def resume():
     return getresume(request)
-    
+
 @app.route('/')
 def index():
     return send_from_directory(app.static_folder, 'index.html')    
-    
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)    
-    
-    
