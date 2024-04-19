@@ -5,7 +5,7 @@ import requests
 def generate_quote(request, client, deployment_name):
     data = request.json
     userPrompt = data.get("prompt")
-    systemPrompt = "You are a quote generator. Create an inspirational quote based on the user input."
+    systemPrompt = "As a quote generator, your task is to craft an inspirational and philosophical quote tailored to software developers. The quote should be based on a theme or topic provided by the user, with a focus on fostering a motivation to learn and a joy of discovery. The tone should be uplifting, potentially incorporating poetic elements for added inspiration."
 
     if userPrompt:
 
