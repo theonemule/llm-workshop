@@ -2,6 +2,7 @@ import pandas as pd
 from transformers import BertTokenizer, BertModel
 import torch
 from pymilvus import Collection, CollectionSchema, FieldSchema, DataType, connections
+import os
 
 # Check if a GPU is available and set PyTorch to use it
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -22,7 +23,9 @@ def get_embeddings(texts):
         return None
 
 # Connect to Milvus and define the collection schema with metadata fields
-connections.connect("default", host='localhost', port='19530')
+milvus_host = os.getenv('MILVUS_HOST', 'localhost')
+milvus_port = int(os.getenv('MILVUS_PORT', '19530'))
+connections.connect("default", host=milvus_host, port=milvus_port)
 
 collection_name = "document_embeddings_with_metadata_bert"
 fields = [

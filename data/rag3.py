@@ -25,7 +25,9 @@ def get_embeddings(texts):
         return None
 
 # Connect to Milvus and define the collection schema with metadata fields
-connections.connect("default", host='localhost', port='19530')
+milvus_host = os.getenv('MILVUS_HOST', 'localhost')
+milvus_port = int(os.getenv('MILVUS_PORT', '19530'))
+connections.connect("default", host=milvus_host, port=milvus_port)
 
 collection_name = "sherlock"
 fields = [

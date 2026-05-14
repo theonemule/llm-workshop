@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  milvus:
+    image: milvusdb/milvus:latest
+    container_name: milvus-standalone
+    environment:
+      COMMON_STORAGETYPE: local
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    volumes:
+      - milvus-data:/var/lib/milvus
+    networks:
+      - llm-workshop-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: llm-workshop-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      milvus:
+        condition: service_healthy
+    environment:
+      # Azure OpenAI Configuration
+      AZURE_OPENAI_API_KEY: ${AZURE_OPENAI_API_KEY}
+      AZURE_OPENAI_ENDPOINT: ${AZURE_OPENAI_ENDPOINT}
+      AZURE_OPENAI_API_VERSION: ${AZURE_OPENAI_API_VERSION:-2023-05-15}
+      
+      # Milvus Configuration
+      MILVUS_HOST: milvus
+      MILVUS_PORT: 19530
+      
+      # Flask Configuration
+      FLASK_ENV: ${FLASK_ENV:-production}
+      FLASK_DEBUG: ${FLASK_DEBUG:-False}
+    volumes:
+      - ./data:/app/data
+      - ./static:/app/static
+      - ./api:/app/api
+    networks:
+      - llm-workshop-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  milvus-data:
+
+networks:
+  llm-workshop-network:
+    driver: bridge

@@ -1,4 +1,5 @@
 from pymilvus import Collection, utility, connections
+import os
 
 # Step 1: Connect to the Milvus server
 # Replace 'default' with your connection name if different.
@@ -6,7 +7,9 @@ from pymilvus import Collection, utility, connections
 
 name = "document_embeddings_with_metadata"
 
-connections.connect("default", host='localhost', port='19530')
+milvus_host = os.getenv('MILVUS_HOST', 'localhost')
+milvus_port = int(os.getenv('MILVUS_PORT', '19530'))
+connections.connect("default", host=milvus_host, port=milvus_port)
 
 utility.drop_collection(name)
 

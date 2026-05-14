@@ -9,7 +9,9 @@ import os
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Connect to Milvus
-connections.connect("default", host='localhost', port='19530')
+milvus_host = os.getenv('MILVUS_HOST', 'localhost')
+milvus_port = int(os.getenv('MILVUS_PORT', '19530'))
+connections.connect("default", host=milvus_host, port=milvus_port)
 
 # Specify the collection name and ensure it's loaded
 collection_name = "resumes"

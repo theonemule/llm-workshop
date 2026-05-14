@@ -9,7 +9,10 @@ from openai import AzureOpenAI
 app = Flask(__name__)
 
 # Connect to Milvus
-connections.connect("default", host='localhost', port='19530')
+import os
+milvus_host = os.getenv('MILVUS_HOST', 'localhost')
+milvus_port = int(os.getenv('MILVUS_PORT', '19530'))
+connections.connect("default", host=milvus_host, port=milvus_port)
 
 # Specify the collection name and ensure it's loaded
 collection_name = "sherlock"
@@ -25,9 +28,9 @@ tokenizer = tiktoken.get_encoding("cl100k_base")
 # Load the model to the specified device
 
 client = AzureOpenAI(
-    api_key = "e34a2369778a4c0ebee164e8fceca658", # os.getenv("AZURE_OPENAI_API_KEY"),  
-    api_version = "2023-05-15",
-    azure_endpoint = "https://ai-dictate.openai.azure.com/" # os.getenv("AZURE_OPENAI_ENDPOINT")
+    api_key = os.getenv("AZURE_OPENAI_API_KEY"),  
+    api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2023-05-15"),
+    azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
 )
 
 

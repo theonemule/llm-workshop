@@ -1,0 +1,32 @@
+# Web Framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Azure OpenAI
+openai==1.3.9
+
+# Audio Processing
+openai-whisper==20230314
+
+# Web Scraping & Processing
+BeautifulSoup4==4.12.2
+
+# Token Counting
+tiktoken==0.5.1
+
+# Vector Database
+pymilvus==2.3.5
+
+# Data Processing
+pandas==2.0.3
+
+# ML/Embeddings
+transformers==4.33.2
+torch>=2.0.0  # PyTorch - can be commented out for CPU-only deployment
+
+# Utilities
+python-dotenv==1.0.0  # For loading .env files
+
+# Optional: For development
+pytest==7.4.2
+pytest-flask==1.3.0

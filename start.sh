@@ -1,50 +1,50 @@
 #!/bin/bash
-# Start milvus-server in the background
-echo "Staring Milvus..."
 
-milvus-server &
+# Exit on error
+set -e
 
-sleep 15
+echo "================================"
+echo "LLM Workshop Application Startup"
+echo "================================"
 
-echo "Staring App..."
-
-#!/bin/bash
-
-# Command to run
-command="python3 app.py"
-
-# Maximum number of retries
-max_retries=5
-
-# Initial retry count
-retry_count=0
-
-# Delay between retries in seconds
-delay=5
-
-# Loop until the command succeeds or we reach the maximum number of retries
-while true; do
-    # Execute the command
-    $command
-
-    # Capture the exit status
-    status=$?
-
-    # Check if the command succeeded
-    if [ $status -eq 0 ]; then
-        echo "Command succeeded."
-        break
-    else
-        # Increment the retry count
-        ((retry_count++))
-
-        # Check if we've reached the maximum number of retries
-        if [ $retry_count -le $max_retries ]; then
-            echo "Command failed with status $status. Attempting retry $retry_count of $max_retries."
-            sleep $delay
-        else
-            echo "Command failed after $max_retries retries. Giving up."
+# Wait for Milvus to be ready
+if [ -n "$MILVUS_HOST" ]; then
+    echo "Waiting for Milvus at $MILVUS_HOST:$MILVUS_PORT..."
+    for i in {1..30}; do
+        if python3 -c "from pymilvus import connections; connections.connect('default', host='$MILVUS_HOST', port=$MILVUS_PORT); print('Connected')" 2>/dev/null; then
+            echo "✓ Milvus is ready!"
             break
         fi
-    fi
-done
+        if [ $i -eq 30 ]; then
+            echo "✗ Timeout waiting for Milvus"
+            exit 1
+        fi
+        echo "  Attempt $i/30 - Waiting..."
+        sleep 2
+    done
+fi
+
+# Load environment variables from .env if it exists
+if [ -f .env ]; then
+    echo "Loading environment variables from .env..."
+    export $(cat .env | grep -v '^#' | xargs)
+fi
+
+# Verify required environment variables
+echo "Verifying environment configuration..."
+if [ -z "$AZURE_OPENAI_API_KEY" ]; then
+    echo "⚠ WARNING: AZURE_OPENAI_API_KEY not set"
+fi
+if [ -z "$AZURE_OPENAI_ENDPOINT" ]; then
+    echo "⚠ WARNING: AZURE_OPENAI_ENDPOINT not set"
+fi
+
+echo "Starting Flask application..."
+echo "  Flask Environment: ${FLASK_ENV:-development}"
+echo "  Flask Debug: ${FLASK_DEBUG:-False}"
+echo "  Milvus Host: ${MILVUS_HOST:-localhost}"
+echo "  Milvus Port: ${MILVUS_PORT:-19530}"
+
+# Start the application
+python3 app.py
+
